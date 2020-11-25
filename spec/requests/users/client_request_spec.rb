@@ -4,16 +4,9 @@ RSpec.describe "Users", type: :request do
     let(:url) { '/users' }
     let(:users) { create_list(:user, 5) }
 
-    it 'returns all users' do
-      users.push(user)
-      get url, headers: auth_header(user)
-      expect(body_json['users']).to contain_exactly(*users.as_json(only: %i[id first_name last_name email role]))
-    end
+    before(:each) { get url, headers: auth_header(user) }
 
-    it 'returns success status' do
-      get url, headers: auth_header(user)
-      expect(response).to have_http_status(:success)  
-    end
+    include_examples 'forbidden access'
   end
   
   context 'POST /users' do
