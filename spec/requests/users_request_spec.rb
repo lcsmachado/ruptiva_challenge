@@ -5,10 +5,19 @@ RSpec.describe "Users", type: :request do
   context 'GET /users' do
     let(:url) { '/users' }
     let(:users) { create_list(:user, 5) }
+
     it 'returns all users' do
-      new_auth_header = user.create_new_auth_token(user)
-      get url, headers: new_auth_header
-      expect(response).to have_http_status(200)  
+      auth = user.create_new_auth_token
+      header = auth.merge({ 'Content-Type' => 'application/json', 'Accept' => 'application/json' })
+      get url, headers: header
+      expect(response.body).to contain_exactly(*users.as_json(only: %i[id first_name last_name email role]))
+    end
+
+    it 'returns success status' do
+      auth = user.create_new_auth_token
+      header = auth.merge({ 'Content-Type' => 'application/json', 'Accept' => 'application/json' })
+      get url, headers: header
+      expect(response).to have_http_status(:success)  
     end
   end
   

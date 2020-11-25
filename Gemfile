@@ -10,6 +10,9 @@ gem 'pg', '>= 0.18', '< 2.0'
 # Use Puma as the app server
 gem 'puma', '~> 4.1'
 
+# Jbuilder
+gem 'jbuilder'
+
 # User Authentication
 gem 'devise_token_auth', '~>1.1.4'
 gem 'pundit'
