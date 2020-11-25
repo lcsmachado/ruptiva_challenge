@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe "Users", type: :request do
+RSpec.describe "Users as :admin", type: :request do
   let!(:user) { create(:user) }
   context 'GET /users' do
     let(:url) { '/users' }
