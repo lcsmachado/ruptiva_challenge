@@ -1,4 +1,17 @@
 class UserPolicy < ApplicationPolicy
+
+  def index?
+    user.admin?
+  end
+
+  def update?
+    user.admin? || scope.id == user.id
+  end
+
+  def destroy?
+    user.admin? || scope.id == user.id
+  end
+  
   class Scope < Scope
     def resolve
       if user.admin?

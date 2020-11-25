@@ -4,6 +4,7 @@ class UsersController < ApplicationController
 
   def index
     @users = User.all
+    authorize @users
   end
   
   def create
@@ -14,10 +15,12 @@ class UsersController < ApplicationController
 
   def update
     @user.attributes = user_params
+    authorize @user
     save_user!
   end
 
   def destroy
+    authorize @user
     @user.destroy!
   rescue StandardError
     render_error(fields: @user.errors.messages)
