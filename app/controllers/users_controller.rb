@@ -1,12 +1,16 @@
 class UsersController < ApplicationController
   before_action :authenticate_user!
-  before_action :load_user, only: %i[update destroy]
+  before_action :load_user, only: %i[show update destroy]
 
   def index
     @users = User.all
     authorize @users
   end
   
+  def show
+    authorize @user
+  end
+
   def create
     @user = User.new
     @user.attributes = user_params

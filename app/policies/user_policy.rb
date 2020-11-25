@@ -10,6 +10,10 @@ class UserPolicy
     user.admin?
   end
 
+  def show?
+    user.admin? || scope.id == user.id
+  end
+
   def update?
     user.admin? || scope.id == user.id
   end
