@@ -18,6 +18,21 @@ RSpec.describe "Users as :admin", type: :request do
     end
   end
   
+  context 'SHOW /users/:id' do
+    let!(:user) { create(:user) }
+    let(:url) { "/users/#{user.id}" }
+    
+    it 'returns user' do
+      get url, headers: auth_header(user)
+      expect(body_json['user']).to eq user.as_json(only: %i[id first_name last_name email role])  
+    end
+
+    it 'returns success status' do
+      get url, headers: auth_header(user)
+      expect(response).to have_http_status(:success)  
+    end
+  end
+
   context 'POST /users' do
     let(:url) { '/users' }
     

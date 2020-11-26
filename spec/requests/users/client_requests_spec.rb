@@ -8,6 +8,7 @@ RSpec.describe "Users", type: :request do
 
     include_examples 'forbidden access'
   end
+
   
   context 'POST /users' do
     let(:url) { '/users' }
