@@ -26,7 +26,7 @@ class UsersController < ApplicationController
 
   def destroy
     authorize @user
-    @user.destroy!
+    soft_delete
   rescue StandardError
     render_error(fields: @user.errors.messages)
   end
@@ -54,4 +54,8 @@ class UsersController < ApplicationController
     render_error(fields: @user.errors.messages)
   end
 
+  def soft_delete
+    @user.deleted = true
+    @user.save!
+  end
 end
