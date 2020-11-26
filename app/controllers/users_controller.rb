@@ -1,6 +1,7 @@
 class UsersController < ApplicationController
   before_action :authenticate_user!
   before_action :load_user, only: %i[show update destroy]
+  rescue_from Pundit::NotAuthorizedError, with: :forbidden_access
 
   def index
     @users = User.all
@@ -31,6 +32,10 @@ class UsersController < ApplicationController
   end
 
   private
+
+  def forbidden_access
+    render_error(message: 'Forbidden access', status: :forbidden)
+  end
 
   def user_params
     return {} unless params.has_key?(:user)
