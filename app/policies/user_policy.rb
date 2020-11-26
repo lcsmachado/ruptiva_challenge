@@ -11,14 +11,20 @@ class UserPolicy
   end
 
   def show?
-    user.admin? || scope.id == user.id
+    permitted?
   end
 
   def update?
-    user.admin? || scope.id == user.id
+    permitted?
   end
 
   def destroy?
+    permitted?
+  end
+
+  private
+
+  def permitted?
     user.admin? || scope.id == user.id
   end
 end
