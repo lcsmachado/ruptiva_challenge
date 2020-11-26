@@ -9,6 +9,27 @@ RSpec.describe "Users", type: :request do
     include_examples 'forbidden access'
   end
 
+  context 'SHOW /users' do
+    let(:user_show) { create(:user) }
+    let(:url) { "/users/#{user_show.id}" }
+
+    context 'does not show other users data' do
+      before(:each) { get url, headers: auth_header(user) }
+      include_examples 'forbidden access' 
+    end
+    
+    context 'return user data' do
+      it 'returns user' do
+        get url, headers: auth_header(user_show)
+        expected_user = user_show.as_json(only: %i[id first_name last_name email role])
+        expect(body_json['user']).to contain_exactly(*expected_user) 
+      end
+      it 'return success status' do
+        get url, headers: auth_header(user_show)
+        expect(response).to have_http_status(:ok)
+      end
+    end
+  end
   
   context 'POST /users' do
     let(:url) { '/users' }
