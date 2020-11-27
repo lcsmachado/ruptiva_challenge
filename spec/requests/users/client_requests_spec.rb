@@ -130,21 +130,30 @@ RSpec.describe "Users", type: :request do
   context 'DELETE users/:id' do
     let!(:user_delete) { create(:user) }
     let(:url) { "/users/#{user_delete.id}" }
-
-    it 'deletes user' do
-      expect do
+    
+    context 'when user tries to delete himself' do
+      it 'deletes user' do
         delete url, headers: auth_header(user_delete)
-      end.to change(User, :deleted).to(true)
+        expect(User.find_by(id: user_delete.id)).to be_nil
+        expect(User.soft_deleted.find_by(id: user_delete.id)).to be_truthy
+      end
+
+      it 'returns no_content status' do
+        delete url, headers: auth_header(user_delete)
+        expect(response).to have_http_status(:no_content)
+      end
+
+      it 'does not have any body content' do
+        delete url, headers: auth_header(user_delete)
+        expect(body_json).to_not be_present
+      end
     end
 
-    it 'returns no_content status' do
-      delete url, headers: auth_header(user_delete)
-      expect(response).to have_http_status(:no_content)
-    end
+    context 'when user tries to delete another user' do
+      let(:another_user) { create(:user, role: :client) }
+      before(:each) { delete url, headers: auth_header(another_user) }
 
-    it 'does not have any body content' do
-      delete url, headers: auth_header(user_delete)
-      expect(body_json).to_not be_present
+      include_examples 'forbidden access'
     end
   end
 end
