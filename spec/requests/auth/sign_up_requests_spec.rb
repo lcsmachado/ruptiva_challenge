@@ -4,45 +4,38 @@ RSpec.describe 'auth/sign_up', type: :request do
   context 'POST /users' do
     let(:url) { '/auth' }
     
-    context 'with valid params' do
-      let(:user_params) { attributes_for(:user).to_json }
-      
-      it 'adds a new user' do
-        expect do
-          post url, params: user_params
-        end.to change(User, :count).by(1)
+    context "with valid params" do
+      let(:user_params) { attributes_for(:user, role: :client).to_json }
+      it "adds new User" do
+        expect {
+          post url, headers: default_header, params: user_params
+        }.to change(User, :count).by(1)
       end
-
-      it 'returns last added user' do
-        post url, params: user_params
-        expected_user = User.last.as_json(only: %i[id first_name last_name email role])
-        expect(body_json['user']).to eq expected_user
+  
+      it "add User as :client" do
+        post url, headers: default_header, params: user_params
+        expect(User.last.role).to eq 'client'
       end
-
-      it 'return success status' do
-        post url, params: user_params
-        expect(response).to have_http_status(:success)
+  
+      it "returns :ok status" do
+        post url, headers: default_header, params: user_params
+        expect(response).to have_http_status(:ok)
       end
     end
-    
-    context 'with invalid params' do
-      let(:user_params) { attributes_for(:user, first_name: nil).to_json }
-
-      it 'does not add a new user' do
-        expect do
-          post url, params: user_params
-        end.to_not change(User, :count)
+  
+    context "with invalid params" do
+      let(:user_invalid_params) { attributes_for(:user, email: nil).to_json }
+  
+      it "does not add a new User" do
+        expect {
+          post url, headers: default_header, params: user_invalid_params
+        }.to_not change(User, :count)
       end
-
-      it 'returns error messages' do
-        post url, params: user_params
-        expect(body_json['errors']['fields']).to have_key('first_name')
-      end
-
-      it 'returns unprocessable_entity status' do
-        post url, params: user_params
+  
+      it "return :unprocessable_entity status" do
+        post url, headers: default_header, params: user_invalid_params
         expect(response).to have_http_status(:unprocessable_entity)
-      end    
+      end
     end
   end
 end

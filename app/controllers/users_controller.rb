@@ -1,5 +1,5 @@
 class UsersController < ApplicationController
-  before_action :authenticate_user!
+  before_action :authenticate_user!, only: %i[index show update destroy]
   before_action :load_user, only: %i[show update destroy]
   rescue_from Pundit::NotAuthorizedError, with: :forbidden_access
 
