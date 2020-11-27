@@ -133,17 +133,17 @@ RSpec.describe "Users", type: :request do
 
     it 'deletes user' do
       expect do
-        delete url, headers: auth_header(user)
-      end.to change(User, :count).by(-1)
+        delete url, headers: auth_header(user_delete)
+      end.to change(User, :deleted).to(true)
     end
 
     it 'returns no_content status' do
-      delete url, headers: auth_header(user)
+      delete url, headers: auth_header(user_delete)
       expect(response).to have_http_status(:no_content)
     end
 
     it 'does not have any body content' do
-      delete url, headers: auth_header(user)
+      delete url, headers: auth_header(user_delete)
       expect(body_json).to_not be_present
     end
   end
