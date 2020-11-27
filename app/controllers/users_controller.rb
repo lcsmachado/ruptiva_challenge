@@ -38,7 +38,7 @@ class UsersController < ApplicationController
   def user_params
     return {} unless params.has_key?(:user)
     byebug
-    params.require(:user).permit(:first_name, :last_name, :email, :password, :password_confirmation, :role)
+    params.permit(:first_name, :last_name, :email, :password, :password_confirmation, :role)
   end
 
   def load_user
