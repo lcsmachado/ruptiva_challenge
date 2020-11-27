@@ -13,12 +13,12 @@ RSpec.describe "Users", type: :request do
     let(:user_show) { create(:user) }
     let(:url) { "/users/#{user_show.id}" }
 
-    context 'does not show other users data' do
+    context 'when user tries to show another user data' do
       before(:each) { get url, headers: auth_header(user) }
       include_examples 'forbidden access' 
     end
     
-    context 'return user data' do
+    context 'when user tries to show his data' do
       it 'returns user' do
         get url, headers: auth_header(user_show)
         expected_user = user_show.as_json(only: %i[id first_name last_name email role])
@@ -79,50 +79,63 @@ RSpec.describe "Users", type: :request do
   context 'PATCH /users/:id' do
     let!(:user) { create(:user) }
     let(:url) { "/users/#{user.id}" }
-
-    context 'with valid params' do
-      let(:new_name) { 'My New Name' }
-      let(:user_update_params) { { user: { first_name: new_name } }.to_json }
-
-      it 'updates user' do
-        patch url, headers: auth_header(user), params: user_update_params
-        user.reload
-        expect(user.first_name).to eq new_name
+    
+    context 'when user tries to update another user data' do
+      let(:another_user) { create(:user, role: :client) }
+      let(:user_params) do
+        { user: attributes_for(:user, first_name: 'Jhon') }.to_json
       end
 
-      it 'returns updates user' do
-        patch url, headers: auth_header(user), params: user_update_params
-        user.reload
-        expected_user = user.as_json(only: %i[id first_name last_name email role])
-        expect(body_json['user']).to eq expected_user
-      end
+      before(:each) { patch url, headers: auth_header(another_user), params: user_params }
 
-      it 'returns success status' do
-        patch url, headers: auth_header(user), params: user_update_params
-        expect(response).to have_http_status(:ok)
-      end
+      include_examples 'forbidden access'
     end
+    
+    context 'when user tries to update his data' do
+      context 'with valid params' do
+        let(:new_name) { 'My New Name' }
+        let(:user_update_params) { { user: { first_name: new_name } }.to_json }
 
-    context 'with invalid params' do
-      let(:user_update_params) do
-        { user: attributes_for(:user, first_name: nil) }.to_json
+        it 'updates user' do
+          patch url, headers: auth_header(user), params: user_update_params
+          user.reload
+          expect(user.first_name).to eq new_name
+        end
+
+        it 'returns updates user' do
+          patch url, headers: auth_header(user), params: user_update_params
+          user.reload
+          expected_user = user.as_json(only: %i[id first_name last_name email role])
+          expect(body_json['user']).to eq expected_user
+        end
+
+        it 'returns success status' do
+          patch url, headers: auth_header(user), params: user_update_params
+          expect(response).to have_http_status(:ok)
+        end
       end
 
-      it 'does not update user' do
-        old_name = user.first_name
-        patch url, headers: auth_header(user), params: user_update_params
-        user.reload
-        expect(user.first_name).to eq old_name
-      end
+      context 'with invalid params' do
+        let(:user_update_params) do
+          { user: attributes_for(:user, first_name: nil) }.to_json
+        end
 
-      it 'returns error messages' do
-        patch url, headers: auth_header(user), params: user_update_params
-        expect(body_json['errors']['fields']).to have_key('first_name')
-      end
+        it 'does not update user' do
+          old_name = user.first_name
+          patch url, headers: auth_header(user), params: user_update_params
+          user.reload
+          expect(user.first_name).to eq old_name
+        end
 
-      it 'returns unprocessable_entity status' do
-        patch url, headers: auth_header(user), params: user_update_params
-        expect(response).to have_http_status(:unprocessable_entity)
+        it 'returns error messages' do
+          patch url, headers: auth_header(user), params: user_update_params
+          expect(body_json['errors']['fields']).to have_key('first_name')
+        end
+
+        it 'returns unprocessable_entity status' do
+          patch url, headers: auth_header(user), params: user_update_params
+          expect(response).to have_http_status(:unprocessable_entity)
+        end
       end
     end
   end
