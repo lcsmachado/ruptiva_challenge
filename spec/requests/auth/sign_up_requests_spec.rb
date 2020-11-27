@@ -5,8 +5,8 @@ RSpec.describe 'auth/sign_up', type: :request do
     let(:url) { '/auth' }
     
     context 'with valid params' do
-      let(:user_params) { { user: attributes_for(:user) }.to_json }
-
+      let(:user_params) { attributes_for(:user).to_json }
+      
       it 'adds a new user' do
         expect do
           post url, params: user_params
@@ -26,7 +26,7 @@ RSpec.describe 'auth/sign_up', type: :request do
     end
     
     context 'with invalid params' do
-      let(:user_params) { { user: attributes_for(:user, first_name: nil) }.to_json }
+      let(:user_params) { attributes_for(:user, first_name: nil).to_json }
 
       it 'does not add a new user' do
         expect do
