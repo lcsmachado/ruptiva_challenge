@@ -1,5 +1,6 @@
 RSpec.describe "Users", type: :request do
   let!(:user) { create(:user, role: :client) }
+  
   context 'GET /users' do
     let(:url) { '/users' }
     let(:users) { create_list(:user, 5) }
