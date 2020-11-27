@@ -1,5 +1,5 @@
 class UsersController < ApplicationController
-  before_action :authenticate_user!, only: %i[index show update destroy]
+  before_action :authenticate_user!
   before_action :load_user, only: %i[show update destroy]
   rescue_from Pundit::NotAuthorizedError, with: :forbidden_access
 
@@ -7,7 +7,7 @@ class UsersController < ApplicationController
     @users = User.all
     authorize @users
   end
-  
+
   def show
     authorize @user
   end
@@ -37,6 +37,7 @@ class UsersController < ApplicationController
 
   def user_params
     return {} unless params.has_key?(:user)
+
     params.require(:user).permit(:first_name, :last_name, :email, :password, :password_confirmation, :role)
   end
 

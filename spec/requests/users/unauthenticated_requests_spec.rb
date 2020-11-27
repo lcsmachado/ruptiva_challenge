@@ -1,7 +1,6 @@
 require 'rails_helper'
 
 RSpec.describe 'Users without authentication' do
-
   context 'GET /users' do
     let(:url) { '/users' }
     let(:users) { create_list(:user, 5) }

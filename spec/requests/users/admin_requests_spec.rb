@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe "Users as :admin", type: :request do
+RSpec.describe 'Users as :admin', type: :request do
   let!(:user) { create(:user) }
   context 'GET /users' do
     let(:url) { '/users' }
@@ -14,28 +14,28 @@ RSpec.describe "Users as :admin", type: :request do
 
     it 'returns success status' do
       get url, headers: auth_header(user)
-      expect(response).to have_http_status(:success)  
+      expect(response).to have_http_status(:success)
     end
   end
-  
+
   context 'SHOW /users/:id' do
     let!(:user) { create(:user) }
     let(:url) { "/users/#{user.id}" }
-    
+
     it 'returns user' do
       get url, headers: auth_header(user)
-      expect(body_json['user']).to eq user.as_json(only: %i[id first_name last_name email role])  
+      expect(body_json['user']).to eq user.as_json(only: %i[id first_name last_name email role])
     end
 
     it 'returns success status' do
       get url, headers: auth_header(user)
-      expect(response).to have_http_status(:success)  
+      expect(response).to have_http_status(:success)
     end
   end
 
   context 'POST /users' do
     let(:url) { '/users' }
-    
+
     context 'with valid params' do
       let(:user_params) { { user: attributes_for(:user) }.to_json }
 
@@ -56,7 +56,7 @@ RSpec.describe "Users as :admin", type: :request do
         expect(response).to have_http_status(:success)
       end
     end
-    
+
     context 'with invalid params' do
       let(:user_params) { { user: attributes_for(:user, first_name: nil) }.to_json }
 
@@ -74,7 +74,7 @@ RSpec.describe "Users as :admin", type: :request do
       it 'returns unprocessable_entity status' do
         post url, headers: auth_header(user), params: user_params
         expect(response).to have_http_status(:unprocessable_entity)
-      end    
+      end
     end
   end
 

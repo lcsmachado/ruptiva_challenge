@@ -1,6 +1,6 @@
-RSpec.describe "Users", type: :request do
+RSpec.describe 'Users', type: :request do
   let!(:user) { create(:user, role: :client) }
-  
+
   context 'GET /users' do
     let(:url) { '/users' }
     let(:users) { create_list(:user, 5) }
@@ -16,14 +16,14 @@ RSpec.describe "Users", type: :request do
 
     context 'when user tries to show another user data' do
       before(:each) { get url, headers: auth_header(user) }
-      include_examples 'forbidden access' 
+      include_examples 'forbidden access'
     end
-    
+
     context 'when user tries to show his data' do
       it 'returns user' do
         get url, headers: auth_header(user_show)
         expected_user = user_show.as_json(only: %i[id first_name last_name email role])
-        expect(body_json['user']).to contain_exactly(*expected_user) 
+        expect(body_json['user']).to contain_exactly(*expected_user)
       end
       it 'return success status' do
         get url, headers: auth_header(user_show)
@@ -31,10 +31,10 @@ RSpec.describe "Users", type: :request do
       end
     end
   end
-  
+
   context 'POST /users' do
     let(:url) { '/users' }
-    
+
     context 'with valid params' do
       let(:user_params) { { user: attributes_for(:user) }.to_json }
 
@@ -55,7 +55,7 @@ RSpec.describe "Users", type: :request do
         expect(response).to have_http_status(:success)
       end
     end
-    
+
     context 'with invalid params' do
       let(:user_params) { { user: attributes_for(:user, first_name: nil) }.to_json }
 
@@ -73,14 +73,14 @@ RSpec.describe "Users", type: :request do
       it 'returns unprocessable_entity status' do
         post url, headers: auth_header(user), params: user_params
         expect(response).to have_http_status(:unprocessable_entity)
-      end    
+      end
     end
   end
 
   context 'PATCH /users/:id' do
     let!(:user) { create(:user) }
     let(:url) { "/users/#{user.id}" }
-    
+
     context 'when user tries to update another user data' do
       let(:another_user) { create(:user, role: :client) }
       let(:user_params) do
@@ -91,7 +91,7 @@ RSpec.describe "Users", type: :request do
 
       include_examples 'forbidden access'
     end
-    
+
     context 'when user tries to update his data' do
       context 'with valid params' do
         let(:new_name) { 'My New Name' }
@@ -144,7 +144,7 @@ RSpec.describe "Users", type: :request do
   context 'DELETE users/:id' do
     let!(:user_delete) { create(:user) }
     let(:url) { "/users/#{user_delete.id}" }
-    
+
     context 'when user tries to delete himself' do
       it 'deletes user' do
         delete url, headers: auth_header(user_delete)
