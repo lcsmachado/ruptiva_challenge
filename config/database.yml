@@ -1,0 +1,19 @@
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  host: localhost
+  username: lcsmachado
+  password: 123456
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+
+development:
+  <<: *default
+  database: ruptiva_challange_development
+test:
+  <<: *default
+  database: ruptiva_challange_test
+production:
+  <<: *default
+  database: ruptiva_challange_production
+  username: ruptiva_challange
+  password: <%= ENV['RUPTIVA_CHALLANGE_DATABASE_PASSWORD'] %>
